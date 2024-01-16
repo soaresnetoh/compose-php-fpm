@@ -1,0 +1,41 @@
+version: "3.2"
+services:
+  nginx-painel:
+      container_name: nginx-painel
+      image: nginx:1.17.8
+      ports:
+          - 8080:80
+      volumes:
+          - ./pipeline_painel/nginx.conf:/etc/nginx/conf.d/nginx.conf
+          - ./pipeline_painel/site:/var/www/html/public/painel
+      links:
+          - php72-nginx-painel
+
+  php72-nginx-painel:
+    build:
+      context: .
+      dockerfile: Dockerfile-painel
+    container_name: php72-nginx-painel
+    volumes:
+        - ./pipeline_painel/site:/var/www/html/public/painel
+
+  nginx-api:
+      container_name: nginx-api
+      image: nginx:1.17.8
+      ports:
+          - 8081:80
+      volumes:
+          - ./pipeline_api/nginx.conf:/etc/nginx/conf.d/nginx.conf
+          - ./pipeline_api/site:/var/www/html/public/api
+      links:
+          - php72-nginx-api
+
+  php72-nginx-api:
+    build:
+      context: .
+      dockerfile: Dockerfile-api
+    container_name: php72-nginx-api
+    volumes:
+        - ./pipeline_api/site:/var/www/html/public/api
+
+
